@@ -1,0 +1,89 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.9'
+    }
+}
+
+plugins {
+    id 'nebula.optional-base' version '3.1.0'
+    id 'net.researchgate.release' version '2.3.5'
+}
+
+ext {
+    projectUrl = 'https://github.com/nginate/zookeeper-client'
+    vcsUrl = 'https://github.com/nginate/zookeeper-client.git'
+
+    slf4jVersion = '1.7.21'
+    nettyVersion = '4.1.0.Final'
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'nebula.optional-base'
+apply plugin: 'com.github.ben-manes.versions'
+apply plugin: "info.solidsoft.pitest"
+apply from: 'gradle/distribution.gradle'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "io.netty:netty-common:$nettyVersion"
+    compile "io.netty:netty-handler:$nettyVersion"
+
+    // Logging
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+
+    // Utils
+    compile 'com.google.guava:guava:19.0'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'commons-beanutils:commons-beanutils:1.9.2'
+    compile "com.github.nginate:commons-lang:1.0.0"
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.7.4'
+
+    // Annotation processors
+    compile 'org.projectlombok:lombok:1.16.8', optional
+    compile 'com.google.code.findbugs:jsr305:3.0.1', optional
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.testng:testng:6.9.11'
+    testCompile 'org.assertj:assertj-core:3.4.1'
+    testCompile "com.github.nginate:commons-testing:1.0.0"
+    testCompile "com.github.nginate:commons-docker:1.0.0"
+
+    testRuntime "org.slf4j:log4j-over-slf4j:$slf4jVersion"
+    testRuntime "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+    testRuntime "org.slf4j:jul-to-slf4j:$slf4jVersion"
+    testRuntime 'ch.qos.logback:logback-classic:1.1.7'
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+}
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+pitest {
+    excludedGroups = ["integration"]
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.13'
+}
+
+build.dependsOn install
