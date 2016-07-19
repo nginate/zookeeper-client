@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.github.nginate.commons.lang.NStrings.format;
 import static com.github.nginate.zookeeper.protocol.ProtocolConstants.PROTOCOL_VERSION;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public class ZookeeperClient {
 
@@ -36,7 +37,7 @@ public class ZookeeperClient {
                 .port(config.getPort())
                 .build();
         binaryTcpClient = new BinaryTcpClient(tcpClientConfig);
-        sessionId.set(config.getSessionId());
+        sessionId.set(defaultIfNull(config.getSessionId(), 0));
         onConnected();
     }
 

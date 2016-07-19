@@ -30,6 +30,7 @@ public class ZookeeperClientIT {
                 "localhost";
         NDockerClient dockerClient = DockerUtils.createClient(clientOptions);
         zookeeperContainer = DockerUtils.forceCreateContainer(dockerClient, zookeeperContainerConfiguration());
+        zookeeperContainer.start();
         ZookeeperClientConfig clientConfig = ZookeeperClientConfig.custom(dockerHost)
                 .port(ZOOKEEPER_HOST_PORT)
                 .build();
@@ -44,7 +45,7 @@ public class ZookeeperClientIT {
 
     @Test
     public void shouldConnect() throws Exception {
-
+//        Thread.sleep(30000);
     }
 
     private static CreateContainerOptions zookeeperContainerConfiguration() throws SocketException {
