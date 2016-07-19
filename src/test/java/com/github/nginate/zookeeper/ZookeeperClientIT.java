@@ -30,7 +30,10 @@ public class ZookeeperClientIT {
                 "localhost";
         NDockerClient dockerClient = DockerUtils.createClient(clientOptions);
         zookeeperContainer = DockerUtils.forceCreateContainer(dockerClient, zookeeperContainerConfiguration());
-        zookeeperClient = new ZookeeperClient(dockerHost, ZOOKEEPER_HOST_PORT);
+        ZookeeperClientConfig clientConfig = ZookeeperClientConfig.custom(dockerHost)
+                .port(ZOOKEEPER_HOST_PORT)
+                .build();
+        zookeeperClient = new ZookeeperClient(clientConfig);
     }
 
     @AfterClass(alwaysRun = true)
